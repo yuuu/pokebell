@@ -32,8 +32,8 @@ def lambda_handler(event:, context:)
       {
         color: '#154272',
         author_name: "Pokebell",
-        author_icon: "https://3.bp.blogspot.com/-6lQ6hDxUt_8/V_4cbLUqc2I/AAAAAAAA-zs/9XKzrr37LGAFOZxsSGiy1_MfivZAtDmLQCLcB/s800/pocket_bell.png",
-		    title: "ポケベルからの発信です",
+        author_icon: "https://user-images.githubusercontent.com/8074640/101222945-36791580-36ce-11eb-9d85-81a3ffed6547.png",
+        title: "ポケベルからの発信です",
         text: message.join,
       }
     ]
