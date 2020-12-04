@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  pokebell
+  
+  Sample SAM Template for pokebell
+
+Parameters:
+  WebhookUrl:
+    Type: String
+    Default: Replace Me
+  IotCoreUrl:
+    Type: String
+    Default: Replace Me
+
+Globals:
+  Function:
+    Timeout: 5
+
+Resources:
+  FunkFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: funk/
+      Handler: app.lambda_handler
+      Runtime: ruby2.7
+      Environment:
+        Variables:
+          WEBHOOK_URL: !Ref WebhookUrl
+          IOT_CORE_URL: !Ref IotCoreUrl
+
+Outputs:
+  FunkFunction:
+    Description: "First Lambda Function ARN"
+    Value: !GetAtt FunkFunction.Arn
+  FunkFunctionIamRole:
+    Description: "Implicit IAM Role created for Funk function"
+    Value: !GetAtt FunkFunctionRole.Arn
