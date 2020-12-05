@@ -18,7 +18,12 @@ const char *PUB_TOPIC = "/devices/m5stack/events";
 const char *SUB_TOPIC = "pokebell";
  
 #define __VERSION__   "1.0.0"
-#define LOOP_INTERVAL (6000)
+#define LOOP_INTERNAL (50)
+#define BEEP_INTERVAL (1600)
+#define DISPLAY_INTERVAL (30000)
+int received = false;
+unsigned long receivedAt = 0;
+int beep = false;
 
 void callback(char* topic, byte* payload, unsigned int length) {
   String buf_t = String(topic);
@@ -37,6 +42,8 @@ void callback(char* topic, byte* payload, unsigned int length) {
   if(json.hasOwnProperty("message")){
     M5.Lcd.println("メッセージを受信しました:");
     M5.Lcd.println((const char*)json["message"]);
+    receivedAt = millis();
+    received = true;
   }
 }
 
@@ -120,19 +127,34 @@ void setup() {
   MODEM.begin(115200, SERIAL_8N1, 16, 17); // 3G MODULE
   cellular_connect();
   mqtt_connect();
+  M5.Lcd.clear(BLACK);
 }
 
 void loop() {
   M5.update();
-  connection_check_and_reconnect();
-  /* Implement for Loop */
-  CONSOLE.println("loop");
-  char payload[512];
-  sprintf(payload, "{\"uptime\":%lu}", millis()/1000); /* for example */
-  MqttClient.publish(PUB_TOPIC, payload);
+  unsigned long start = millis();
 
-  unsigned long next = millis();
-  while (millis() < next + LOOP_INTERVAL) {
-      MqttClient.loop();
+  connection_check_and_reconnect();
+  CONSOLE.println("loop");
+
+  if ((receivedAt + DISPLAY_INTERVAL) <= start) {
+    M5.Lcd.clear(BLACK);
+  }
+  if (received) {
+    if ((receivedAt + BEEP_INTERVAL) <= start) {
+      received = false;
+      M5.Speaker.mute();
+    } else {
+      beep = !beep;
+      if (beep) {
+        M5.Speaker.tone(1000);
+      } else {
+        M5.Speaker.mute();
+      }
+    }
+  }
+
+  while (millis() < (start + LOOP_INTERNAL)) {
+    MqttClient.loop();
   }
 }

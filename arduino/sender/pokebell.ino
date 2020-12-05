@@ -228,28 +228,7 @@ int lowTone(char button) {
   }
 }
 
-int highTone(char button) {
-  switch (button) {
-    case '1':
-    case '4':
-    case '7':
-    case '*':
-      return 1209;
-    case '2':
-    case '5':
-    case '8':
-    case '0':
-      return 1336;
-    case '3':
-    case '6':
-    case '9':
-    case '#':
-      return 1447;
-  }
-}
-
 void tone(char button) {
-  M5.Speaker.tone(highTone(button), 100);
   M5.Speaker.tone(lowTone(button), 100);
   delay(100);
   M5.Speaker.mute();
